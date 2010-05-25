@@ -3,7 +3,7 @@
 ;; Copyright 2009, 2010 Kevin Ryde
 
 ;; Author: Kevin Ryde <user42@zip.com.au>
-;; Version: 3
+;; Version: 4
 ;; Keywords: frames
 ;; URL: http://user42.tuxfamily.org/formfeed-hline/index.html
 
@@ -57,19 +57,21 @@
 ;; Version 2 - defang xemacs defadvice for unload-feature
 ;; Version 3 - copy standard-display-table to gain other settings
 ;;           - unset window-display-table if standard, to help enriched-mode
+;; Version 4 - correction to "Usual Display" info node link
 
 ;;; Code:
+
 
 ;; Cribs:
 ;;
 ;; Emacs uses only a single window/buffer/global display table, and doesn't
-;; follow to char-table-parent, so a new window table is created as a copy
-;; of the standard-display-table, to keep settings from there.  XEmacs
-;; doesn't need that as it looks through all relevant window/frame/global
-;; display tables for each character, so its new window-display-table can be
-;; just a make-display-table.
+;; inherit from char-table-parent, so a new window table is created as a
+;; copy of the standard-display-table to at least keep current settings from
+;; there, though not future changes.  XEmacs doesn't need that as it looks
+;; through all relevant window/frame/global display tables for each
+;; character, so its new window-display-table can be just a
+;; make-display-table.
 ;;
-
 
 ;;-----------------------------------------------------------------------------
 ;; xemacs21 incompatibilities
@@ -149,8 +151,8 @@ Doesn't work and not used in xemacs21."
 (defun formfeed-hline-display-table-string-face (str face)
   "Return STR with FACE applied suitable for use in a display table.
 This means a vector of `make-glyph-code' in Emacs.
-In XEmacs currently STR itself is returned (is it some sort of
-`make-glyph' to apply a face?)."
+In XEmacs currently STR itself is returned (should it be some
+sort of `make-glyph' to apply a face?)."
   (when (eval-when-compile (fboundp 'formfeed-hline--make-glyph-code)) ;; emacs
     (setq str (vconcat (mapcar (lambda (c)
                                  (formfeed-hline--make-glyph-code c face))
@@ -223,8 +225,7 @@ the same as other control characters.  It's applied to ordinary
 windows, not the minibuffer window.
 
 A line is good if the default ^L is not enough visual indication.
-\(See Info node `(emacs)Usual Display Conventions' on the
-default.)
+\(See Info node `(elisp)Usual Display' on the default.)
 
 -----
 `ctl-arrow' is ignored, you get \"^L----\" even if ctl-arrow is
