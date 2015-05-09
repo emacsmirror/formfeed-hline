@@ -1,10 +1,10 @@
 ;;; formfeed-hline.el --- display formfeed with horizontal line
 
-;; Copyright 2009, 2010 Kevin Ryde
+;; Copyright 2009, 2010, 2015 Kevin Ryde
 
-;; Author: Kevin Ryde <user42@zip.com.au>
-;; Version: 4
-;; Keywords: frames
+;; Author: Kevin Ryde <user42_kevin@yahoo.com.au>
+;; Version: 5
+;; Keywords: frames, display
 ;; URL: http://user42.tuxfamily.org/formfeed-hline/index.html
 
 ;; formfeed-hline.el is free software; you can redistribute it and/or modify
@@ -58,6 +58,7 @@
 ;; Version 3 - copy standard-display-table to gain other settings
 ;;           - unset window-display-table if standard, to help enriched-mode
 ;; Version 4 - correction to "Usual Display" info node link
+;; Version 5 - new email
 
 ;;; Code:
 
@@ -74,7 +75,7 @@
 ;;
 
 ;;-----------------------------------------------------------------------------
-;; xemacs21 incompatibilities
+;; compatibilities
 
 (eval-and-compile
   (if (eval-when-compile (fboundp 'window-display-table))
@@ -82,6 +83,8 @@
       (defalias 'formfeed-hline--window-display-table
         'window-display-table)
     ;; xemacs
+    (eval-when-compile
+      (put 'formfeed-hline--window-display-table 'side-effect-free t))
     (defun formfeed-hline--window-display-table (window)
       "Return the display table for WINDOW."
       (specifier-instance current-display-table window))))
@@ -110,6 +113,8 @@
 
         ((eval-when-compile (fboundp 'face-id))
          ;; emacs21
+         (eval-when-compile
+           (put 'formfeed-hline--make-glyph-code 'side-effect-free t))
          (defun formfeed-hline--make-glyph-code (char &optional face)
            "Return a glyph code (an integer) for CHAR with FACE.
 The same as `make-glyph-code' in Emacs 22."
@@ -121,6 +126,8 @@ The same as `make-glyph-code' in Emacs 22."
 ;;-----------------------------------------------------------------------------
 ;; generic
 
+(eval-when-compile
+  (put 'formfeed-hline-char-table-equal 'side-effect-free t))
 (defun formfeed-hline-char-table-equal (table1 table2)
   "Return non-nil if char tables TABLE1 and TABLE2 are equal.
 Doesn't work and not used in xemacs21."
@@ -148,6 +155,8 @@ Doesn't work and not used in xemacs21."
                            table2)
            (null lst)))))
 
+(eval-when-compile
+  (put 'formfeed-hline-display-table-string-face 'side-effect-free t))
 (defun formfeed-hline-display-table-string-face (str face)
   "Return STR with FACE applied suitable for use in a display table.
 This means a vector of `make-glyph-code' in Emacs.
@@ -318,6 +327,9 @@ URL `http://user42.tuxfamily.org/formfeed-hline/index.html'"
              formfeed-hline-mode)
         (mapc 'formfeed-hline-window-size-change (frame-list)))))
 
+;;-----------------------------------------------------------------------------
+
+;; LocalWords: formfeed formfeeds docstring
 
 (provide 'formfeed-hline)
 
